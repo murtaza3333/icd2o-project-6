@@ -1,12 +1,170 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My ICD2O Project</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICD2O Grade & Target Calculator</title>
+    <style>
+        /* CSS Formatting: Clean, high-contrast, perfect for a dark projector screen */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            color: #2d3748;
+            padding: 20px;
+            text-align: center;
+        }
+        .app-container {
+            max-width: 550px;
+            background: #ffffff;
+            margin: 0 auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        h1 { color: #2b6cb0; margin-bottom: 5px; }
+        .subtitle { color: #718096; font-size: 0.95em; margin-bottom: 25px; }
+        .input-section {
+            text-align: left;
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 0.95em;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 2px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+        input[type="number"]:focus {
+            border-color: #4299e1;
+            outline: none;
+        }
+        button {
+            background-color: #4299e1;
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #3182ce;
+        }
+        .result-box {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #ebf8ff;
+            border-left: 6px solid #4299e1;
+            border-radius: 4px;
+            display: none;
+            text-align: left;
+        }
+        .result-box h3 { margin-top: 0; color: #2b6cb0; }
+        .alert-warning {
+            background-color: #fffaf0;
+            border-left-color: #dd6b20;
+            color: #dd6b20;
+        }
+    </style>
 </head>
 <body>
-    <h1>Hello World!</h1>
-    <p>This is my project website.</p>
-    <script src="script.js"></script>
+
+    <div class="app-container">
+        <h1>📊 Grade & Target Calculator</h1>
+        <p class="subtitle">Find out exactly what you need on your final exam/culminating to reach your goals.</p>
+        
+        <div class="input-section">
+            <div class="form-group">
+                <label for="currentGrade">Your Current Grade (%):</label>
+                <input type="number" id="currentGrade" placeholder="e.g., 78" min="0" max="100">
+            </div>
+
+            <div class="form-group">
+                <label for="examWeight">Weight of Final Exam / Culminating (%):</label>
+                <input type="number" id="examWeight" placeholder="e.g., 30" min="0" max="100">
+            </div>
+
+            <div class="form-group">
+                <label for="targetGrade">Your Desired Target Grade (%):</label>
+                <input type="number" id="targetGrade" placeholder="e.g., 80" min="0" max="100">
+            </div>
+        </div>
+
+        <button onclick="calculateRequiredScore()">Calculate Required Score</button>
+
+        <div id="resultBox" class="result-box">
+            <h3>📈 Your Calculation Results</h3>
+            <p id="currentStatusText"></p>
+            <p id="requiredScoreText" style="font-size: 1.1em; font-weight: bold;"></p>
+        </div>
+    </div>
+
+    <script>
+        // Function 1: Core calculation and logic checking
+        function calculateRequiredScore() {
+            // Variables fetching user inputs
+            let currentGrade = parseFloat(document.getElementById("currentGrade").value);
+            let examWeight = parseFloat(document.getElementById("examWeight").value);
+            let targetGrade = parseFloat(document.getElementById("targetGrade").value);
+            
+            let resultBox = document.getElementById("resultBox");
+
+            // Input Validation
+            if (isNaN(currentGrade) || isNaN(examWeight) || isNaN(targetGrade)) {
+                alert("Please fill in all fields with valid numbers!");
+                return; // Keyword 'return' exits the function immediately if inputs are empty
+            }
+
+            // Math Computations
+            // Term weight is whatever percentage remains outside the final exam
+            let termWeight = 100 - examWeight; 
+            let currentContribution = currentGrade * (termWeight / 100);
+            
+            // Formula to find required final mark: 
+            // Required = (Target - Current Contribution) / (Exam Weight / 100)
+            let neededScore = (targetGrade - currentContribution) / (examWeight / 100);
+            
+            // Rounding down to 1 decimal place for neatness
+            neededScore = Math.round(neededScore * 10) / 10;
+
+            // Update UI with results
+            let statusText = document.getElementById("currentStatusText");
+            let scoreText = document.getElementById("requiredScoreText");
+
+            statusText.innerText = "Your current coursework accounts for " + currentContribution.toFixed(1) + "% of your overall final mark.";
+
+            // Logic statements based on computed data
+            if (neededScore <= 0) {
+                scoreText.innerText = "Good news! You have already locked in your target grade. You could get a 0% on the final and still pass with your goal!";
+                resultBox.className = "result-box"; // normal blue box
+            } else if (neededScore > 100) {
+                scoreText.innerText = "To hit your target, you need a " + neededScore + "% on the final. This is mathematically impossible without bonus marks! ⚠️";
+                resultBox.className = "result-box alert-warning"; // turns box orange for warning
+            } else {
+                scoreText.innerText = "You need to score at least " + neededScore + "% on your final exam/culminating to achieve an overall mark of " + targetGrade + "%.";
+                resultBox.className = "result-box"; // normal blue box
+            }
+
+            // Reveal the output box on the screen
+            resultBox.style.display = "block";
+        }
+    </script>
 </body>
 </html>
