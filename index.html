@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICD2O Grade & Target Calculator</title>
+    <title>ICD2O Grade & GPA Calculator</title>
     <style>
-        /* CSS Formatting: Clean, high-contrast, perfect for a dark projector screen */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f0f4f8;
@@ -13,34 +12,62 @@
             padding: 20px;
             text-align: center;
         }
+        h1.page-title {
+            color: #2b6cb0;
+            font-size: 1.6em;
+            margin-bottom: 5px;
+        }
+        .page-subtitle {
+            color: #718096;
+            font-size: 0.95em;
+            margin-bottom: 30px;
+        }
+        .tools-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: center;
+            align-items: flex-start;
+        }
         .app-container {
-            max-width: 550px;
+            max-width: 500px;
+            width: 100%;
             background: #ffffff;
-            margin: 0 auto;
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        h1 { color: #2b6cb0; margin-bottom: 5px; }
-        .subtitle { color: #718096; font-size: 0.95em; margin-bottom: 25px; }
-        .input-section {
             text-align: left;
+        }
+        .app-container h2 {
+            color: #2b6cb0;
+            margin-top: 0;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        .subtitle {
+            color: #718096;
+            font-size: 0.92em;
+            margin-bottom: 22px;
+            text-align: center;
+        }
+        .input-section {
             background: #f7fafc;
             padding: 20px;
             border-radius: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             border: 1px solid #e2e8f0;
         }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 14px;
         }
+        .form-group:last-child { margin-bottom: 0; }
         label {
             display: block;
             font-weight: 600;
             margin-bottom: 6px;
-            font-size: 0.95em;
+            font-size: 0.93em;
         }
-        input[type="number"] {
+        input[type="number"], input[type="text"] {
             width: 100%;
             padding: 10px;
             box-sizing: border-box;
@@ -48,7 +75,7 @@
             border-radius: 6px;
             font-size: 1em;
         }
-        input[type="number"]:focus {
+        input[type="number"]:focus, input[type="text"]:focus {
             border-color: #4299e1;
             outline: none;
         }
@@ -57,114 +84,266 @@
             color: white;
             border: none;
             padding: 14px;
-            font-size: 1.1em;
+            font-size: 1.05em;
             font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
             width: 100%;
             transition: background 0.2s;
         }
-        button:hover {
-            background-color: #3182ce;
-        }
+        button:hover { background-color: #3182ce; }
         .result-box {
-            margin-top: 25px;
-            padding: 20px;
+            margin-top: 22px;
+            padding: 18px;
             background-color: #ebf8ff;
             border-left: 6px solid #4299e1;
             border-radius: 4px;
             display: none;
-            text-align: left;
         }
         .result-box h3 { margin-top: 0; color: #2b6cb0; }
         .alert-warning {
             background-color: #fffaf0;
             border-left-color: #dd6b20;
-            color: #dd6b20;
+            color: #7b341e;
+        }
+        .alert-success {
+            background-color: #f0fff4;
+            border-left-color: #38a169;
+        }
+        .gpa-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 0.95em;
+        }
+        .gpa-table th {
+            background-color: #bee3f8;
+            color: #2b6cb0;
+            padding: 8px 10px;
+            text-align: left;
+        }
+        .gpa-table td {
+            padding: 7px 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .gpa-table tr:last-child td {
+            border-bottom: none;
+            font-weight: bold;
+            background-color: #ebf8ff;
+        }
+        .grade-letter {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2b6cb0;
+            text-align: center;
+            margin: 10px 0 4px;
+        }
+        .grade-label {
+            text-align: center;
+            color: #4a5568;
+            font-size: 0.93em;
+            margin-bottom: 10px;
+        }
+        @media (max-width: 700px) {
+            .tools-wrapper { flex-direction: column; }
         }
     </style>
 </head>
 <body>
 
+<h1 class="page-title">📚 ICD2O Student Tools</h1>
+<p class="page-subtitle">Grade & Target Calculator + GPA Average Calculator</p>
+
+<div class="tools-wrapper">
+
+    <!-- TOOL 1: Grade & Target Calculator -->
     <div class="app-container">
-        <h1>📊 Grade & Target Calculator</h1>
-        <p class="subtitle">Find out exactly what you need on your final exam/culminating to reach your goals.</p>
-        
+        <h2>📊 Grade & Target Calculator</h2>
+        <p class="subtitle">Find out what you need on your final exam to reach your goal.</p>
         <div class="input-section">
             <div class="form-group">
                 <label for="currentGrade">Your Current Grade (%):</label>
                 <input type="number" id="currentGrade" placeholder="e.g., 78" min="0" max="100">
             </div>
-
             <div class="form-group">
                 <label for="examWeight">Weight of Final Exam / Culminating (%):</label>
                 <input type="number" id="examWeight" placeholder="e.g., 30" min="0" max="100">
             </div>
-
             <div class="form-group">
                 <label for="targetGrade">Your Desired Target Grade (%):</label>
                 <input type="number" id="targetGrade" placeholder="e.g., 80" min="0" max="100">
             </div>
         </div>
-
         <button onclick="calculateRequiredScore()">Calculate Required Score</button>
-
         <div id="resultBox" class="result-box">
             <h3>📈 Your Calculation Results</h3>
             <p id="currentStatusText"></p>
-            <p id="requiredScoreText" style="font-size: 1.1em; font-weight: bold;"></p>
+            <p id="requiredScoreText" style="font-size:1.05em; font-weight:bold;"></p>
         </div>
     </div>
 
-    <script>
-        // Function 1: Core calculation and logic checking
-        function calculateRequiredScore() {
-            // Variables fetching user inputs
-            let currentGrade = parseFloat(document.getElementById("currentGrade").value);
-            let examWeight = parseFloat(document.getElementById("examWeight").value);
-            let targetGrade = parseFloat(document.getElementById("targetGrade").value);
-            
-            let resultBox = document.getElementById("resultBox");
+    <!-- TOOL 2: GPA Average Calculator -->
+    <div class="app-container">
+        <h2>🎓 GPA Average Calculator</h2>
+        <p class="subtitle">Enter your mark for each class to calculate your overall average.</p>
+        <div class="input-section">
+            <div class="form-group">
+                <label for="class1Name">Class 1 Name (optional):</label>
+                <input type="text" id="class1Name" placeholder="e.g., Math">
+            </div>
+            <div class="form-group">
+                <label for="class1Mark">Class 1 Mark (%):</label>
+                <input type="number" id="class1Mark" placeholder="e.g., 82" min="0" max="100">
+            </div>
+            <div class="form-group">
+                <label for="class2Name">Class 2 Name (optional):</label>
+                <input type="text" id="class2Name" placeholder="e.g., English">
+            </div>
+            <div class="form-group">
+                <label for="class2Mark">Class 2 Mark (%):</label>
+                <input type="number" id="class2Mark" placeholder="e.g., 75" min="0" max="100">
+            </div>
+            <div class="form-group">
+                <label for="class3Name">Class 3 Name (optional):</label>
+                <input type="text" id="class3Name" placeholder="e.g., Science">
+            </div>
+            <div class="form-group">
+                <label for="class3Mark">Class 3 Mark (%):</label>
+                <input type="number" id="class3Mark" placeholder="e.g., 90" min="0" max="100">
+            </div>
+            <div class="form-group">
+                <label for="class4Name">Class 4 Name (optional):</label>
+                <input type="text" id="class4Name" placeholder="e.g., History">
+            </div>
+            <div class="form-group">
+                <label for="class4Mark">Class 4 Mark (%):</label>
+                <input type="number" id="class4Mark" placeholder="e.g., 88" min="0" max="100">
+            </div>
+        </div>
+        <button onclick="calculateGPA()">Calculate My Average</button>
+        <div id="gpaResultBox" class="result-box">
+            <h3>📊 Your GPA Results</h3>
+            <div class="grade-letter" id="gradeLetter"></div>
+            <div class="grade-label" id="gradeLabel"></div>
+            <table class="gpa-table" id="gpaTable">
+                <thead>
+                    <tr><th>Class</th><th>Mark</th></tr>
+                </thead>
+                <tbody id="gpaTableBody"></tbody>
+            </table>
+        </div>
+    </div>
 
-            // Input Validation
-            if (isNaN(currentGrade) || isNaN(examWeight) || isNaN(targetGrade)) {
-                alert("Please fill in all fields with valid numbers!");
-                return; // Keyword 'return' exits the function immediately if inputs are empty
-            }
+</div>
 
-            // Math Computations
-            // Term weight is whatever percentage remains outside the final exam
-            let termWeight = 100 - examWeight; 
-            let currentContribution = currentGrade * (termWeight / 100);
-            
-            // Formula to find required final mark: 
-            // Required = (Target - Current Contribution) / (Exam Weight / 100)
-            let neededScore = (targetGrade - currentContribution) / (examWeight / 100);
-            
-            // Rounding down to 1 decimal place for neatness
-            neededScore = Math.round(neededScore * 10) / 10;
+<script>
+    // =============================================
+    // TOOL 1: Grade & Target Calculator
+    // =============================================
+    function calculateRequiredScore() {
+        let currentGrade = parseFloat(document.getElementById("currentGrade").value);
+        let examWeight   = parseFloat(document.getElementById("examWeight").value);
+        let targetGrade  = parseFloat(document.getElementById("targetGrade").value);
+        let resultBox    = document.getElementById("resultBox");
 
-            // Update UI with results
-            let statusText = document.getElementById("currentStatusText");
-            let scoreText = document.getElementById("requiredScoreText");
-
-            statusText.innerText = "Your current coursework accounts for " + currentContribution.toFixed(1) + "% of your overall final mark.";
-
-            // Logic statements based on computed data
-            if (neededScore <= 0) {
-                scoreText.innerText = "Good news! You have already locked in your target grade. You could get a 0% on the final and still pass with your goal!";
-                resultBox.className = "result-box"; // normal blue box
-            } else if (neededScore > 100) {
-                scoreText.innerText = "To hit your target, you need a " + neededScore + "% on the final. This is mathematically impossible without bonus marks! ⚠️";
-                resultBox.className = "result-box alert-warning"; // turns box orange for warning
-            } else {
-                scoreText.innerText = "You need to score at least " + neededScore + "% on your final exam/culminating to achieve an overall mark of " + targetGrade + "%.";
-                resultBox.className = "result-box"; // normal blue box
-            }
-
-            // Reveal the output box on the screen
-            resultBox.style.display = "block";
+        if (isNaN(currentGrade) || isNaN(examWeight) || isNaN(targetGrade)) {
+            alert("Please fill in all fields with valid numbers!");
+            return;
         }
-    </script>
+
+        let termWeight          = 100 - examWeight;
+        let currentContribution = currentGrade * (termWeight / 100);
+        let neededScore         = (targetGrade - currentContribution) / (examWeight / 100);
+        neededScore             = Math.round(neededScore * 10) / 10;
+
+        let statusText = document.getElementById("currentStatusText");
+        let scoreText  = document.getElementById("requiredScoreText");
+
+        statusText.innerText = "Your current coursework accounts for " + currentContribution.toFixed(1) + "% of your overall final mark.";
+
+        if (neededScore <= 0) {
+            scoreText.innerText  = "Good news! You have already locked in your target grade. You could get a 0% on the final and still hit your goal!";
+            resultBox.className  = "result-box";
+        } else if (neededScore > 100) {
+            scoreText.innerText  = "To hit your target, you need a " + neededScore + "% on the final. This is mathematically impossible without bonus marks! ⚠️";
+            resultBox.className  = "result-box alert-warning";
+        } else {
+            scoreText.innerText  = "You need to score at least " + neededScore + "% on your final exam/culminating to achieve an overall mark of " + targetGrade + "%.";
+            resultBox.className  = "result-box";
+        }
+
+        resultBox.style.display = "block";
+    }
+
+    // =============================================
+    // TOOL 2: GPA Average Calculator
+    // =============================================
+
+    // Function: Convert a percentage to a letter grade
+    function getLetterGrade(average) {
+        if (average >= 90) return { letter: "A+", label: "Outstanding" };
+        if (average >= 80) return { letter: "A",  label: "Excellent" };
+        if (average >= 70) return { letter: "B",  label: "Good" };
+        if (average >= 60) return { letter: "C",  label: "Satisfactory" };
+        if (average >= 50) return { letter: "D",  label: "Pass" };
+        return { letter: "F", label: "Needs Improvement" };
+    }
+
+    // Function: Calculate and display the GPA average
+    function calculateGPA() {
+        let classes = [
+            { name: document.getElementById("class1Name").value.trim() || "Class 1", mark: parseFloat(document.getElementById("class1Mark").value) },
+            { name: document.getElementById("class2Name").value.trim() || "Class 2", mark: parseFloat(document.getElementById("class2Mark").value) },
+            { name: document.getElementById("class3Name").value.trim() || "Class 3", mark: parseFloat(document.getElementById("class3Mark").value) },
+            { name: document.getElementById("class4Name").value.trim() || "Class 4", mark: parseFloat(document.getElementById("class4Mark").value) }
+        ];
+
+        for (let i = 0; i < classes.length; i++) {
+            if (isNaN(classes[i].mark)) {
+                alert("Please enter a mark for all 4 classes!");
+                return;
+            }
+            if (classes[i].mark < 0 || classes[i].mark > 100) {
+                alert("Marks must be between 0 and 100!");
+                return;
+            }
+        }
+
+        let total = 0;
+        for (let i = 0; i < classes.length; i++) {
+            total = total + classes[i].mark;
+        }
+        let average = total / classes.length;
+        average = Math.round(average * 10) / 10;
+
+        let grade     = getLetterGrade(average);
+        let tableBody = document.getElementById("gpaTableBody");
+        tableBody.innerHTML = "";
+
+        for (let i = 0; i < classes.length; i++) {
+            let row = document.createElement("tr");
+            row.innerHTML = "<td>" + classes[i].name + "</td><td>" + classes[i].mark + "%</td>";
+            tableBody.appendChild(row);
+        }
+
+        let summaryRow = document.createElement("tr");
+        summaryRow.innerHTML = "<td>📊 Overall Average</td><td>" + average + "%</td>";
+        tableBody.appendChild(summaryRow);
+
+        document.getElementById("gradeLetter").innerText = grade.letter;
+        document.getElementById("gradeLabel").innerText  = average + "% — " + grade.label;
+
+        let gpaResultBox = document.getElementById("gpaResultBox");
+        if (average >= 70) {
+            gpaResultBox.className = "result-box alert-success";
+        } else if (average >= 50) {
+            gpaResultBox.className = "result-box";
+        } else {
+            gpaResultBox.className = "result-box alert-warning";
+        }
+
+        gpaResultBox.style.display = "block";
+    }
+</script>
 </body>
 </html>
